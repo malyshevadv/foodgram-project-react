@@ -91,10 +91,8 @@ class Base64ImageField(serializers.ImageField):
     """Сериализатор для дешифрации изображения из base64"""
 
     def to_internal_value(self, data):
-        if (
-                (isinstance(data, str) or isinstance(data, bytes)) and
-                data.startswith('data:image') and (';base64,' in data)
-           ):
+        if ((isinstance(data, str) or isinstance(data, bytes))
+                and data.startswith('data:image') and (';base64,' in data)):
             # base64 encoded image - decode
             format, imgstr = data.split(';base64,')  # format ~= data:image/X,
             ext = format.split('/')[-1]  # guess file extension
