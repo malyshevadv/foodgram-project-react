@@ -13,7 +13,7 @@
 Для входа от имени администратора:
 ```
 Логин: mainadmin@foodgram.gav
-Пароль $up3rpass]
+Пароль $up3rpass
 ```
 
 ![example workflow](https://github.com/malyshevadv/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
