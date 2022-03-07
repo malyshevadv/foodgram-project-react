@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ingridient, Recipe, Tag
+from .models import Ingredient, Recipe, Tag
 
 
 @admin.register(Tag)
@@ -8,8 +8,8 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'color')
 
 
-@admin.register(Ingridient)
-class IngridientAdmin(admin.ModelAdmin):
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
 
 

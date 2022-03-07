@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from api.serializers import IngridientSerializer
+from api.serializers import IngredientSerializer
 
 
 class Command(BaseCommand):
@@ -17,7 +17,7 @@ class Command(BaseCommand):
             data = json.load(file)
 
             for obj in data:
-                serializer = IngridientSerializer(data=obj)
+                serializer = IngredientSerializer(data=obj)
 
                 if serializer.is_valid():
                     serializer.save()

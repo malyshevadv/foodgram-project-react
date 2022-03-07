@@ -2,13 +2,14 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (FavoritesViewSet, IngridientViewSet, RecipeViewSet,
-                    ShoppingCartViewSet, SubscriptionViewSet, TagViewSet)
+from .views import (FavoritesViewSet, IngredientViewSet, RecipeViewSet,
+                    ShoppingCartViewSet, SubscriptionViewSet, TagViewSet,
+                    download_shop_cart, subscriptions)
 
 router = DefaultRouter()
 
 router.register('tags', TagViewSet, basename='tags')
-router.register('ingredients', IngridientViewSet, basename='ingredients')
+router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register('recipes', RecipeViewSet, basename='recipes')
 
 router.register(
@@ -29,6 +30,12 @@ router.register(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('users/subscriptions/', subscriptions, name='subscriptions'),
+    path(
+        'recipes/download_shopping_cart/',
+        download_shop_cart,
+        name='donwload_shop_cart'
+    ),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('', include(router.urls))

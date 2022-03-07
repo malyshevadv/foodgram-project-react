@@ -1,0 +1,4 @@
+docker-compose exec web-food python manage.py makemigrations
+docker-compose exec web-food python manage.py migrate --no-input
+docker-compose exec web-food python manage.py collectstatic --no-input
+docker-compose exec web-food python manage.py load_ingredients

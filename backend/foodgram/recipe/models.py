@@ -12,60 +12,71 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id']
 
-class Ingridient(models.Model):
+
+class Ingredient(models.Model):
     name = models.TextField(max_length=200)
     measurement_unit = models.TextField(max_length=50)
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id']
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='recipes')
-    name = models.TextField(max_length=150)
+        User, on_delete=models.CASCADE, related_name='user_recipes')
+    name = models.TextField(max_length=200)
     image = models.ImageField(
         upload_to='recipes/', null=True, blank=True)
     text = models.TextField()
     cooking_time = models.PositiveIntegerField()
 
     ingredients = models.ManyToManyField(
-        Ingridient,
-        through='IngridientAmount',
-        related_name='recipes',
+        Ingredient,
+        through='IngredientAmount',
+        related_name='ingredient_amount_set',
         blank=True
     )
 
-    tags = models.ForeignKey(
+    tags = models.ManyToManyField(
         Tag,
-        on_delete=models.CASCADE,
         related_name='recipes',
-        blank=True
+        blank=True,
     )
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id']
 
-class IngridientAmount(models.Model):
-    ingridient = models.ForeignKey(
-        Ingridient,
-        related_name='ingridient_amount',
+
+class IngredientAmount(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        related_name='ingredient_amount',
         on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
         Recipe,
-        related_name='ingridient_in_recipe_amount',
+        related_name='ingredient_in_recipe_amount',
         on_delete=models.CASCADE,
     )
     amount = models.IntegerField()
 
     def __str__(self):
-        return "{}_{}".format(self.recipe.__str__(), self.ingridient.__str__())
+        return "{}_{}_{}".format(
+            self.recipe.__str__(),
+            self.ingredient.__str__(),
+            self.amount)
 
     class Meta:
-        unique_together = (('ingridient', 'recipe'),)
+        unique_together = (('ingredient', 'recipe'),)
 
 
 class Subscription(models.Model):
@@ -74,7 +85,7 @@ class Subscription(models.Model):
         on_delete=models.CASCADE,
         related_name='subscriber',
     )
-    following = models.ForeignKey(
+    to_follow = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='is_subscribed',
@@ -83,10 +94,14 @@ class Subscription(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'following'],
+                fields=['user', 'to_follow'],
                 name='unique_follow'
             )
         ]
+
+    @property
+    def object_field():
+        return "to_follow"
 
 
 class Favorites(models.Model):
@@ -95,7 +110,7 @@ class Favorites(models.Model):
         on_delete=models.CASCADE,
         related_name='fav_list',
     )
-    recipes = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name='fav_list',
@@ -105,10 +120,14 @@ class Favorites(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipes'],
+                fields=['user', 'recipe'],
                 name='unique_recipe_in_fav'
             )
         ]
+
+    @property
+    def object_field():
+        return "recipe"
 
 
 class ShoppingCart(models.Model):
@@ -117,7 +136,7 @@ class ShoppingCart(models.Model):
         on_delete=models.CASCADE,
         related_name='cart_list',
     )
-    recipes = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name='cart_list',
@@ -127,7 +146,11 @@ class ShoppingCart(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipes'],
+                fields=['user', 'recipe'],
                 name='unique_recipe_in_cart'
             )
         ]
+
+    @property
+    def object_field():
+        return "recipe"

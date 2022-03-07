@@ -10,7 +10,7 @@ urllib3==1.26.6
 zipp==3.5.0
 requests==2.26.0
 django==2.2.16
-djangorestframework==3.12.4
+djangorestframework==3.11.2
 djoser==2.0.1
 PyJWT==2.1.0
 pytest==6.2.4
