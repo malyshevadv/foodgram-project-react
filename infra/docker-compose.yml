@@ -8,8 +8,8 @@ services:
       - .env
   web-food:
     build:
-      context: ../
-      dockerfile: ./backend/Dockerfile
+      context: ../backend
+      dockerfile: Dockerfile
     image: daryamalysheva/foodgram-backend:latest
     restart: always
     volumes:
