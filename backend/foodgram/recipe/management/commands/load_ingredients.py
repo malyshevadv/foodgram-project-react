@@ -1,10 +1,9 @@
 import json
 import os
 
+from api.serializers import IngredientSerializer
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
-from api.serializers import IngredientSerializer
 
 
 class Command(BaseCommand):
