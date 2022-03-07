@@ -1,9 +1,18 @@
+LocaL:
 docker-compose exec web-food python manage.py makemigrations
 docker-compose exec web-food python manage.py migrate --no-input
 docker-compose exec web-food python manage.py collectstatic --no-input
 docker-compose exec web-food python manage.py load_ingredients
 
 docker-compose exec web-food python manage.py createsuperuser
+
+Remote:
+sudo docker-compose exec practicum_web-food_1 python manage.py makemigrations
+sudo docker-compose exec practicum_web-food_1 python manage.py migrate --no-input
+sudo docker-compose exec practicum_web-food_1 python manage.py collectstatic --no-input
+sudo docker-compose exec practicum_web-food_1 python manage.py load_ingredients
+
+sudo docker-compose exec practicum_web-food_1 python manage.py createsuperuser
 
 mainadmin@foodgram.gav
 $up3rpass
@@ -16,3 +25,6 @@ $up3rpass22
 
 user3@foodgram.gav
 $up3rpass33
+
+scp docker-compose.yml practicum@84.201.141.120:/home/practicum/
+scp nginx.conf  practicum@84.201.141.120:/home/practicum/
