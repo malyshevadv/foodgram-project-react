@@ -2,3 +2,17 @@ docker-compose exec web-food python manage.py makemigrations
 docker-compose exec web-food python manage.py migrate --no-input
 docker-compose exec web-food python manage.py collectstatic --no-input
 docker-compose exec web-food python manage.py load_ingredients
+
+docker-compose exec web-food python manage.py createsuperuser
+
+mainadmin@foodgram.gav
+$up3rpass
+
+user1@foodgram.gav
+$up3rpass11
+
+user2@foodgram.gav
+$up3rpass22
+
+user3@foodgram.gav
+$up3rpass33

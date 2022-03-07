@@ -10,6 +10,11 @@
 Адрес API: http://praktikum-dm.hopto.org/api
 Адрес страницы администратора: http://praktikum-dm.hopto.org/api/admin
 
+Для входа от имени администратора:
+```
+Логин: mainadmin@foodgram.gav
+Пароль $up3rpass]
+```
 
 ![example workflow](https://github.com/malyshevadv/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 

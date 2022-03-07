@@ -215,6 +215,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             tag_list.append(TagSerializer(tag).data)
         response['tags'] = tag_list
 
+        response['image'] = instance.image.url
+
         user = self.context['request'].user
 
         if (not user.is_authenticated):

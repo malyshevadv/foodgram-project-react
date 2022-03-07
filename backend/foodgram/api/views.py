@@ -17,8 +17,7 @@ from .permissions import IsAdmin, IsAuthenticated, IsAuthor, ReadOnly
 from .serializers import (FavoritesSerializer, IngredientSerializer,
                           RecipeSerializer, ShoppingCartSerializer,
                           SubscriptionListToDisplaySerializer,
-                          SubscriptionSerializer,
-                          TagSerializer)
+                          SubscriptionSerializer, TagSerializer)
 
 
 @api_view(['GET'])
