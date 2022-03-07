@@ -7,10 +7,10 @@ services:
     env_file:
       - .env
   web-food:
+    image: daryamalysheva/foodgram-backend:latest
     build:
       context: ../backend
       dockerfile: Dockerfile
-    image: daryamalysheva/foodgram-backend:latest
     restart: always
     volumes:
       - static_value:/app/backend_staticfiles/
@@ -19,11 +19,11 @@ services:
       - db-food
     env_file:
       - .env
-  frontend: 
+  frontend:  
+    image: daryamalysheva/foodgram-frontend:latest
     build:
       context: ../frontend
       dockerfile: Dockerfile
-    image: daryamalysheva/foodgram-frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
