@@ -7,12 +7,12 @@ docker-compose exec web-food python manage.py load_ingredients
 docker-compose exec web-food python manage.py createsuperuser
 
 Remote:
-sudo docker-compose exec practicum_web-food_1 python manage.py makemigrations
-sudo docker-compose exec practicum_web-food_1 python manage.py migrate --no-input
-sudo docker-compose exec practicum_web-food_1 python manage.py collectstatic --no-input
-sudo docker-compose exec practicum_web-food_1 python manage.py load_ingredients
+sudo docker exec practicum_web-food_1 python manage.py makemigrations
+sudo docker exec practicum_web-food_1 python manage.py migrate --no-input
+sudo docker exec practicum_web-food_1 python manage.py collectstatic --no-input
+sudo docker exec practicum_web-food_1 python manage.py load_ingredients
 
-sudo docker-compose exec practicum_web-food_1 python manage.py createsuperuser
+sudo docker-compose exec practicum_web-food_1 python manage.py init_superuser --username mainadmin --password '$up3rpass' --noinput --email 'mainadmin@foodgram.gav'
 
 mainadmin@foodgram.gav
 $up3rpass
