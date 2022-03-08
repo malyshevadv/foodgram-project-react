@@ -24,12 +24,19 @@
 docker-compose up -d --build
 ```
 
+Для запуска на основе готовых контейнеров:
+```
+docker-compose pull
+docker-compose up -d --no-build
+```
+
 При первом деплое выполнить:
 ```
 docker-compose exec web-food python manage.py makemigrations
 docker-compose exec web-food python manage.py migrate --no-input
 docker-compose exec web-food python manage.py collectstatic --no-input
 docker-compose exec web-food python manage.py load_ingredients
+docker-compose exec web-food python manage.py load_tags
 ```
 ### Примеры запросов:
 

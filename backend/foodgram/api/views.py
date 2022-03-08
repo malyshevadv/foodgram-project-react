@@ -3,20 +3,17 @@ import csv
 from django.http import HttpResponse
 from recipe.models import (Favorites, Ingredient, Recipe, ShoppingCart,
                            Subscription, Tag)
-from rest_framework import status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
-from rest_framework.viewsets import (GenericViewSet, ModelViewSet,
-                                     ReadOnlyModelViewSet)
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .permissions import IsAdmin, IsAuthenticated, IsAuthor, ReadOnly
 from .serializers import (FavoritesSerializer, IngredientSerializer,
                           RecipeSerializer, ShoppingCartSerializer,
                           SubscriptionListToDisplaySerializer,
                           SubscriptionSerializer, TagSerializer)
+from .viewsets import URLParamNOPayloadViewSet
 
 
 @api_view(['GET'])
@@ -144,7 +141,7 @@ class RecipeViewSet(ModelViewSet):
         return super().get_queryset()
 
 
-class SubscriptionViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
+class SubscriptionViewSet(URLParamNOPayloadViewSet):
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.all()
     permission_classes = [
@@ -153,65 +150,23 @@ class SubscriptionViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
     pagination_class = PageNumberPagination
 
     def create(self, *args, **kwargs):
-        """Метод переопределен:
-        POST without payload,
-        прописываем поля на основе данных запроса,
-        а именно пользователя-подписчика, отправляющего запрос
-         и ID пользователя-автора из адресной строки
+        """Метод переопределен: POST without payload,
+         получаем данные запроса, передаем в специальный метод
         """
         obj_to_act_on = kwargs.get('user_id')
+        param_name = 'to_follow'
         user = self.request.user.id
 
-        serializer = self.get_serializer(data=self.request.data,
-                                         context={
-                                             'to_follow': obj_to_act_on,
-                                             'user': user})
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
-
-    def get_serializer(self, *args, **kwargs):
-        """Метод переопределен:
-        POST without payload,
-        передаем корректный контекст для сериалайзера
-        """
-        serializer_class = self.get_serializer_class()
-
-        draft_request_data = self.request.data.copy()
-        draft_request_data['to_follow'] = kwargs['context'].get('to_follow')
-        draft_request_data['user'] = kwargs['context'].get('user')
-
-        kwargs['context'] = self.get_serializer_context()
-        kwargs['data'] = draft_request_data
-        return serializer_class(*args, **kwargs)
+        return self.create_special(param_name, obj_to_act_on, user)
 
     @action(methods=['delete'], detail=False)
     def delete(self, request, user_id=None):
-
-        to_delete = request.user.subscriber.filter(to_follow=user_id)
-        if to_delete.count() == 1:
-            to_delete.first().delete()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT
-            )
-        elif to_delete.count() == 0:
-            return Response(
-                'Ошибка удаления объекта: не найдено.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        else:
-            return Response(
-                'Ошибка удаления объекта: что-то пошло не так.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return self.delete_special(
+            request.user.subscriber.filter(to_follow=user_id)
+        )
 
 
-class ShoppingCartViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
+class ShoppingCartViewSet(URLParamNOPayloadViewSet):
     serializer_class = ShoppingCartSerializer
     queryset = ShoppingCart.objects.all()
     permission_classes = [
@@ -220,131 +175,42 @@ class ShoppingCartViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
     pagination_class = None
 
     def create(self, *args, **kwargs):
-        """Метод переопределен:
-        POST without payload,
-        прописываем поля на основе данных запроса,
-        а именно пользователя, отправляющего запрос
-        и ID рецепта в адресной строке
+        """Метод переопределен: POST without payload,
+         получаем данные запроса, передаем в специальный метод
         """
-
         obj_to_act_on = kwargs.get('recipe_id')
+        param_name = 'recipe'
         user = self.request.user.id
 
-        serializer = self.get_serializer(data=self.request.data,
-                                         context={
-                                             'recipe': obj_to_act_on,
-                                             'user': user})
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
+        return self.create_special(param_name, obj_to_act_on, user)
+
+    @action(methods=['delete'], detail=False)
+    def delete(self, request, recipe_id=None):
+        return self.delete_special(
+            request.user.cart_list.filter(recipe=recipe_id)
         )
 
-    def get_serializer(self, *args, **kwargs):
-        """Метод переопределен:
-        POST without payload,
-        передаем корректный контекст для сериалайзера
-        """
-        # leave this intact
-        serializer_class = self.get_serializer_class()
 
-        # Intercept the request and add required data to the request.data
-        draft_request_data = self.request.data.copy()
-        draft_request_data['recipe'] = kwargs['context'].get('recipe')
-        draft_request_data['user'] = kwargs['context'].get('user')
-
-        kwargs['context'] = self.get_serializer_context()
-        kwargs['data'] = draft_request_data
-        return serializer_class(*args, **kwargs)
-
-    @action(methods=['delete'], detail=True)
-    def delete(self, request, recipe_id=None):
-
-        to_delete = request.user.cart_list.filter(recipe=recipe_id)
-        if to_delete.count() == 1:
-            to_delete.first().delete()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT
-            )
-        elif to_delete.count() == 0:
-            return Response(
-                'Ошибка удаления объекта: не найдено.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        else:
-            return Response(
-                'Ошибка удаления объекта: что-то пошло не так.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-
-class FavoritesViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
+class FavoritesViewSet(URLParamNOPayloadViewSet):
     serializer_class = FavoritesSerializer
     queryset = Favorites.objects.all()
     permission_classes = [
         IsAuthenticated | IsAdmin | ReadOnly
     ]
-    pagination_class = PageNumberPagination
     pagination_class = None
 
     def create(self, *args, **kwargs):
-        """Метод переопределен:
-        POST without payload,
-        прописываем поля на основе данных запроса,
-        а именно пользователя, отправляющего запрос
-        и ID рецепта в адресной строке
+        """Метод переопределен: POST without payload,
+         получаем данные запроса, передаем в специальный метод
         """
         obj_to_act_on = kwargs.get('recipe_id')
+        param_name = 'recipe'
         user = self.request.user.id
 
-        serializer = self.get_serializer(data=self.request.data,
-                                         context={
-                                             'recipe': obj_to_act_on,
-                                             'user': user})
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
-
-    def get_serializer(self, *args, **kwargs):
-        """Метод переопределен:
-        POST without payload,
-        передаем корректный контекст для сериалайзера
-        """
-        serializer_class = self.get_serializer_class()
-
-        draft_request_data = self.request.data.copy()
-        draft_request_data['recipe'] = kwargs['context'].get('recipe')
-        draft_request_data['user'] = kwargs['context'].get('user')
-
-        kwargs['context'] = self.get_serializer_context()
-        # kwargs['data'] immutable - поэтому заменяем
-        kwargs['data'] = draft_request_data
-        return serializer_class(*args, **kwargs)
+        return self.create_special(param_name, obj_to_act_on, user)
 
     @action(methods=['delete'], detail=False)
     def delete(self, request, recipe_id=None):
-
-        to_delete = request.user.fav_list.filter(recipe=recipe_id)
-        if to_delete.count() == 1:
-            to_delete.first().delete()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT
-            )
-        elif to_delete.count() == 0:
-            return Response(
-                'Ошибка удаления объекта: не найдено.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        else:
-            return Response(
-                'Ошибка удаления объекта: что-то пошло не так.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return self.delete_special(
+            request.user.fav_list.filter(recipe=recipe_id)
+        )

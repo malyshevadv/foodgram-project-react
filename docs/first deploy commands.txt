@@ -11,8 +11,9 @@ sudo docker exec practicum_web-food_1 python manage.py makemigrations
 sudo docker exec practicum_web-food_1 python manage.py migrate --no-input
 sudo docker exec practicum_web-food_1 python manage.py collectstatic --no-input
 sudo docker exec practicum_web-food_1 python manage.py load_ingredients
+sudo docker exec practicum_web-food_1 python manage.py load_tags
 
-sudo docker exec practicum_web-food_1 python manage.py init_superuser --username mainadmin --password '$up3rpass' --noinput --email 'mainadmin@foodgram.gav'
+sudo docker exec practicum_web-food_1 python manage.py init_superuser --username mainadmin --password '$up3rpass' --noinput --email 'mainadmin@foodgram.gav' --first_name Admin --last_name Main
 
 mainadmin@foodgram.gav
 $up3rpass

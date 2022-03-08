@@ -72,7 +72,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор промежуточного класса
-    для сохранения инфомрации о количестве ингредиента в рецепте
+    для отображения информации о количестве ингредиента в рецепте
     """
     id = serializers.IntegerField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')

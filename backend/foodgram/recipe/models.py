@@ -5,8 +5,8 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    name = models.TextField(max_length=200)
-    color = models.CharField(max_length=16)
+    name = models.TextField(max_length=200, unique=True)
+    color = models.CharField(max_length=16, unique=True)
     slug = models.SlugField(unique=True)
 
     def __str__(self):
@@ -39,8 +39,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientAmount',
-        related_name='ingredient_amount_set',
-        blank=True
+        related_name='ingredient_amount_set'
     )
 
     tags = models.ManyToManyField(
@@ -48,6 +47,8 @@ class Recipe(models.Model):
         related_name='recipes',
         blank=True,
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -113,8 +114,7 @@ class Favorites(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='fav_list',
-        blank=True
+        related_name='fav_list'
     )
 
     class Meta:
@@ -139,8 +139,7 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='cart_list',
-        blank=True
+        related_name='cart_list'
     )
 
     class Meta:

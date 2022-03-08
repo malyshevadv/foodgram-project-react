@@ -8,3 +8,4 @@ User = get_user_model()
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'password',
                     'email', 'first_name', 'last_name')
+    list_filter = ('username', 'email')
