@@ -54,7 +54,7 @@ class Recipe(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['id']
+        ordering = ['creation_date']
 
 
 class IngredientAmount(models.Model):
