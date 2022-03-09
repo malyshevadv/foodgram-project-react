@@ -50,13 +50,12 @@ class URLParamNOPayloadViewSet(CreateModelMixin,
             return Response(
                 status=status.HTTP_204_NO_CONTENT
             )
-        elif queryset.count() == 0:
+        if queryset.count() == 0:
             return Response(
                 'Ошибка удаления объекта: не найдено.',
                 status=status.HTTP_400_BAD_REQUEST
             )
-        else:
-            return Response(
-                'Ошибка удаления объекта: что-то пошло не так.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return Response(
+            'Ошибка удаления объекта: что-то пошло не так.',
+            status=status.HTTP_400_BAD_REQUEST
+        )

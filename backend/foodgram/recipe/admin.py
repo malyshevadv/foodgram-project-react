@@ -2,7 +2,8 @@ from django import forms
 from django.contrib import admin
 from django.db import models
 
-from .models import Ingredient, Recipe, Tag
+from .models import (Favorites, Ingredient, IngredientAmount, Recipe,
+                     ShoppingCart, Subscription, Tag)
 
 
 @admin.register(Tag)
@@ -35,3 +36,23 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def in_favorites(self, obj):
         return obj.fav_list.all().count()
+
+
+@admin.register(IngredientAmount)
+class IngredientAmountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'ingredient', 'recipe', 'amount')
+
+
+@admin.register(Favorites)
+class FavoritesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe')
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe')
+
+
+@admin.register(Subscription)
+class SubscriptionCartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'to_follow')

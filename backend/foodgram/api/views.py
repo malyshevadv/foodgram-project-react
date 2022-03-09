@@ -1,13 +1,15 @@
 import csv
 
 from django.http import HttpResponse
-from recipe.models import (Favorites, Ingredient, Recipe, ShoppingCart,
-                           Subscription, Tag)
+from django_filters import rest_framework as filters
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from recipe.models import (Favorites, Ingredient, Recipe, ShoppingCart,
+                           Subscription, Tag)
+from .filters import IngredientFilter
 from .permissions import IsAdmin, IsAuthenticated, IsAuthor, ReadOnly
 from .serializers import (FavoritesSerializer, IngredientSerializer,
                           RecipeSerializer, ShoppingCartSerializer,
@@ -94,15 +96,9 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     ]
     search_fields = ('@name', )
     pagination_class = None
-
-    def get_queryset(self):
-        queryset = Ingredient.objects.all()
-        name = self.request.query_params.get('name')
-
-        if name is not None:
-            return queryset.filter(name__icontains=name.lower())
-
-        return super().get_queryset()
+    filter_backends = [filters.DjangoFilterBackend, ]
+    filterset_class = IngredientFilter
+    filterset_fields = ('name', )
 
 
 class RecipeViewSet(ModelViewSet):
