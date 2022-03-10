@@ -2,9 +2,11 @@ LocaL:
 docker-compose exec web-food python manage.py makemigrations
 docker-compose exec web-food python manage.py migrate --no-input
 docker-compose exec web-food python manage.py collectstatic --no-input
+docker cp ./data/. infra-web-food-1:app/data
 docker-compose exec web-food python manage.py load_ingredients
+docker-compose exec web-food python manage.py load_tags
 
-docker-compose exec web-food python manage.py createsuperuser
+docker exec infra-web-food-1 python manage.py init_superuser --username mainadmin --password '$up3rpass' --noinput --email 'mainadmin@foodgram.gav' --first_name Admin --last_name Main
 
 Remote:
 sudo docker exec practicum_web-food_1 python manage.py makemigrations
