@@ -72,7 +72,7 @@ def subscriptions(request):
     serializer = SubscriptionListToDisplaySerializer(
         instance=subscription_list,
         many=True,
-        context={'limit': recipes_limit}
+        context={'recipes_limit': recipes_limit}
     )
 
     return paginator.get_paginated_response(serializer.data)

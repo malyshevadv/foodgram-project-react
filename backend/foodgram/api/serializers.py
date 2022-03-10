@@ -255,7 +255,7 @@ class SubscriptionListToDisplaySerializer(UserSerializer):
         """Переопределенный класс отображения:
         вложенные сериализаторы требуют обработки для вывода
         """
-        lim = self.context.get('limit')
+        lim = self.context.get('recipes_limit')
 
         response = super().to_representation(instance)
         response['articles_count'] = instance.user_recipes.all().count()
