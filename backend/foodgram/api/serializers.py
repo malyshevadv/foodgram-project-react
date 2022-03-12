@@ -242,7 +242,11 @@ class SubscriptionListToDisplaySerializer(UserSerializer):
         default=0,
         read_only=True
     )
-    recipes = RecipeShortenedToDisplaySerializer(read_only=True, many=True)
+    recipes = RecipeShortenedToDisplaySerializer(
+        read_only=True,
+        many=True
+    )
+    is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
