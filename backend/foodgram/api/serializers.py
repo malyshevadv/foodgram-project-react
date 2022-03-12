@@ -32,11 +32,11 @@ class UserSerializer(serializers.ModelSerializer):
         на запрашиваемого пользователя
         """
 
-        if hasattr(self.context, 'user'):
+        if hasattr(self.context['request'], 'user'):
             user = self.context['request'].user
         else:
             user = None
-
+        
         if (user is None or not user.is_authenticated):
             return False
         return (user.subscriber.filter(to_follow=obj).count() > 0)
